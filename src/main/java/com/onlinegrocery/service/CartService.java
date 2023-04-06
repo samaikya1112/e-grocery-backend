@@ -17,7 +17,9 @@ public interface CartService {
 
 	List<Cart> getAllCartItems();
 
-	Cart updateCart(int id, CartDto cartDTO);
+	Cart updateCart(int cartId, CartDto cartDTO);
+
+	
 
 	
 

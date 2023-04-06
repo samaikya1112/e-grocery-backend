@@ -9,7 +9,8 @@ import lombok.Data;
 @Data
 public class WishlistDto {
 
-	private List<Integer> productId;
-	private double totalPrice;
+	private int productId;
+	private double ProductPrice;
+	
 
 	}

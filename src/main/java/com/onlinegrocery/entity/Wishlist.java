@@ -3,6 +3,7 @@ package com.onlinegrocery.entity;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,11 +23,15 @@ public class Wishlist {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int WishlistId;
-	private double totalPrice;
+	private int productCount;
+	private double ProductPrice;
 	
-	@JsonIgnore
-	@OneToMany(targetEntity = Product.class)
+	@OneToMany(targetEntity = Product.class, fetch = FetchType.EAGER)
 	private List<Product> products;
 
-	 
+	
+	
+	
+
+	
 }

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,9 +35,9 @@ public class CartController {
         return new ResponseEntity<Cart>(cartService.addItemToCart(cartDTO), HttpStatus.OK);
     }
 	
-	@PutMapping("/updateCart")
-	ResponseEntity<Cart> updateCart(@RequestParam int id, @RequestBody CartDto cartDTO) {
-		return new ResponseEntity<Cart>(cartService.updateCart(id,cartDTO),HttpStatus.OK);
+	@PutMapping("/updateCart/{cartId}")
+	ResponseEntity<Cart> updateCart(@PathVariable("cartId") int cartId, @RequestBody CartDto cartDTO) {
+		return new ResponseEntity<Cart>(cartService.updateCart(cartId,cartDTO),HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/deleteCart")
