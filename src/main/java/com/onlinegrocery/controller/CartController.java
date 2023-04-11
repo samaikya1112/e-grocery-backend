@@ -40,8 +40,8 @@ public class CartController {
 		return new ResponseEntity<Cart>(cartService.updateCart(cartId,cartDTO),HttpStatus.OK);
 	}
 	
-	@DeleteMapping("/deleteCart")
-	public ResponseEntity<String> deleteItemFromCart(@RequestParam int cartId) {
+	@DeleteMapping("/deleteCart/{cartId}")
+	public ResponseEntity<String> deleteItemFromCart(@PathVariable("cartId") int cartId) {
 		cartService.deleteItemFromCart(cartId);
 		return new ResponseEntity<String>("deleted", HttpStatus.OK);
 	}

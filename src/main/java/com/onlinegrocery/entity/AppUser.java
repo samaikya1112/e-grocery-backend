@@ -10,9 +10,9 @@ import com.onlinegrocery.enums.Role;
 @Entity
 public class AppUser {
 @Id
-@GeneratedValue(strategy=GenerationType.AUTO)
-
-private int userid;
+//@GeneratedValue(strategy=GenerationType.AUTO)
+//
+//private int userid;
 @Column(unique=true)
 private String userName;
 

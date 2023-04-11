@@ -76,11 +76,13 @@ public class CartServiceImpl implements CartService {
 //        cartRepo.save(cart);
 //        return cart;
 //    }
-    
     @Override
     public Cart updateCart(int cartId, CartDto cartDTO) {
+        // Find the product by ID
         Product product = productRepo.findById(cartDTO.getProductId())
             .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
+        // Find the cart by ID
         Cart cart = cartRepo.findById(cartId)
             .orElseThrow(() -> new CartNotFoundException("Cart not found"));
 
@@ -88,15 +90,18 @@ public class CartServiceImpl implements CartService {
         cart.setProductCount(cartDTO.getProductCount());
         cart.setTotalPrice(cartDTO.getTotalPrice());
 
-        // Set the cart property of the product
-//        product.setCart(cart);
+        // Add the product to the cart if it is not already present
+        if (!cart.getProducts().contains(product)) {
+            cart.getProducts().add(product);
+        }
 
-        // Save the product
-        productRepo.save(product);
+        // Save the cart
+        cartRepo.save(cart);
 
         // Return the updated cart
         return cart;
     }
+
 
 
     
