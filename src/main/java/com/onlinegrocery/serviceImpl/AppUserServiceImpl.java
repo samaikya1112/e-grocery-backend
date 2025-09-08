@@ -23,12 +23,7 @@ import com.onlinegrocery.service.AppUserService;
 public class AppUserServiceImpl implements AppUserService {
 	@Autowired
 	private AppUserRepo appUserRepo;
-	@Autowired
-	private JavaMailSender mailSender;
-	@Autowired
-	private VerificationRepo verificationrepo;
-
-
+	
 
 	@Override
 	public AppUser register(AppUser appUser) {
@@ -47,30 +42,23 @@ public class AppUserServiceImpl implements AppUserService {
 			AppUser user = login.get();
 			if(login.get().getPassword().equals(password)) {
 				loginResponseDto.setUserName(userName);
+				loginResponseDto.setUserid(user.getUserid());
 				loginResponseDto.setMessage("Login Successfull");
 				loginResponseDto.setRole(user.getRole());
-				
+				loginResponseDto.setMobileNumber(user.getMobileNumber());
 			}
 			else {
-				loginResponseDto.setMessage("Invalid Username or password");
+				loginResponseDto.setMessage("Invalid password");
 			}
 			
 		}
 		else {
-			loginResponseDto.setMessage("Not Registered");
+			loginResponseDto.setMessage("Invalid Username");
 		}
 		return loginResponseDto;
 	}
-	@Override
-	public String findUserName(String userName) {
-		Optional <AppUser> loginObj=appUserRepo.findById(userName);
-		if(loginObj.isPresent()) {
-			return "User Already Present";
-		}
-		else {
-			return null;
-		}
-}
+
+	
 	@Override
 	public String resetPassword(String userName, String password, String newPassword) throws AppUserException {
 	Optional<AppUser> loginObj= appUserRepo.findByuserName(userName);
@@ -91,75 +79,7 @@ public class AppUserServiceImpl implements AppUserService {
 	throw new AppUserException(s);
 	}
 	
-	@Override
-	public String sendEmail(String toEmail) throws AppUserException{
-	Optional <AppUser> appUser=appUserRepo.findByuserName(toEmail);
-	if(appUser.isPresent()) {
-	SimpleMailMessage message=new SimpleMailMessage();
-	message.setTo(toEmail);
-	message.setSubject("Email Verification ");
-	Random random = new Random();
-	//String code = RandomStringUtils.randomNumeric(4);
-	int randomNumber = random.nextInt(9000) + 1000; 
-	String code=Integer.toBinaryString(randomNumber);
-	message.setText(code);
-	mailSender.send(message);
-	Verification verification=new Verification();
-	verification.setUserName(toEmail);
-	verification.setOtp(code);
-	verificationrepo.save(verification);
-	return "mail sent successfully";
-	}
-	else {
-	throw new AppUserException("Enter Valid Email");
-	}
-	}
-//	 @Override
-//	 public String VerifyOtp(String email,String otp) throws AppUserException{
-//	 Optional<Verification> obj =verificationrepo.findById(email);
-//	 if(obj.isPresent()) {
-//	 if(obj.get().getOtp().equals(otp)) {
-//	 verificationrepo.deleteById(email);
-//	 return "Otp Matched";
-//	 
-//	 }
-//	 else{
-//	 throw new AppUserException("Enter Valid Email");
-//	 
-//	 }
-//	 }
-//	 else {
-//	 throw new AppUserException("Otp didn't match");
-//	 }
-//	 }
-
-
-
-
-	@Override
-	public String VerifyOtp(String email, String otp) throws AppUserException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
-
-	@Override
-	public String verifyEmail(String email) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
-
-	@Override
-	public String verifyOtp(String email, String otp) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 
 
 
