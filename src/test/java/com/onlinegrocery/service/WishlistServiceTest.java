@@ -1,7 +1,9 @@
 package com.onlinegrocery.service;
 
-import static org.junit.Assert.assertNotNull;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -12,11 +14,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.onlinegrocery.dto.WishlistDto;
@@ -31,7 +33,7 @@ import com.onlinegrocery.repo.ProductRepo;
 import com.onlinegrocery.repo.WishlistRepo;
 import com.onlinegrocery.serviceImpl.WishlistServiceImpl;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class WishlistServiceTest {
 
 	@InjectMocks
@@ -77,36 +79,49 @@ public class WishlistServiceTest {
 		assertEquals(10.0, result.getProductPrice());
 	}
 
-	@Test(expected = ProductNotFoundException.class)
-	public void testAddWishlistProductNotFound() throws ProductNotFoundException, UserNotFoundException {
-		WishlistDto wishlistDto = new WishlistDto();
-		wishlistDto.setProductId(1);
-		wishlistDto.setProductPrice(10.0);
-		wishlistDto.setUserName("testuser");
-		wishlistDto.setUserid(1);
+	@Test
+	void testAddWishlistProductNotFound()
+	        throws UserNotFoundException {
 
-		when(productRepo.findById(wishlistDto.getProductId())).thenReturn(Optional.empty());
+	    WishlistDto wishlistDto = new WishlistDto();
+	    wishlistDto.setProductId(1);
+	    wishlistDto.setProductPrice(10.0);
+	    wishlistDto.setUserName("testuser");
+	    wishlistDto.setUserid(1);
 
-		wishlistService.addWishlist(wishlistDto);
+	    when(productRepo.findById(wishlistDto.getProductId()))
+	            .thenReturn(Optional.empty());
+
+	    assertThrows(
+	        ProductNotFoundException.class,
+	        () -> wishlistService.addWishlist(wishlistDto)
+	    );
 	}
 
-	@Test(expected = UserNotFoundException.class)
-	public void testAddWishlistUserNotFound() throws ProductNotFoundException, UserNotFoundException {
+	@Test
+	void testAddWishlistUserNotFound()
+	        throws ProductNotFoundException {
 
-		WishlistDto wishlistDto = new WishlistDto();
-		wishlistDto.setProductId(1);
-		wishlistDto.setProductPrice(10.0);
-		wishlistDto.setUserName("testuser");
-		wishlistDto.setUserid(1);
+	    WishlistDto wishlistDto = new WishlistDto();
+	    wishlistDto.setProductId(1);
+	    wishlistDto.setProductPrice(10.0);
+	    wishlistDto.setUserName("testuser");
+	    wishlistDto.setUserid(1);
 
-		Product product = new Product();
-		product.setProductId(1);
-		product.setProductName("Test Product");
+	    Product product = new Product();
+	    product.setProductId(1);
+	    product.setProductName("Test Product");
 
-		when(productRepo.findById(wishlistDto.getProductId())).thenReturn(Optional.of(product));
-		when(userRepo.findById(wishlistDto.getUserid())).thenReturn(Optional.empty());
+	    when(productRepo.findById(wishlistDto.getProductId()))
+	            .thenReturn(Optional.of(product));
 
-		wishlistService.addWishlist(wishlistDto);
+	    when(userRepo.findById(wishlistDto.getUserid()))
+	            .thenReturn(Optional.empty());
+
+	    assertThrows(
+	        UserNotFoundException.class,
+	        () -> wishlistService.addWishlist(wishlistDto)
+	    );
 	}
 
 	@Test // getWishlistById
@@ -125,12 +140,17 @@ public class WishlistServiceTest {
 		assertEquals("Test Wishlist", result.getUserName());
 	}
 
-	@Test(expected = WishlistNotFoundException.class)
-	public void testGetWishlistByIdNotFound() {
-		int wishlistId = 1;
+	@Test
+	void testGetWishlistByIdNotFound() {
+	    int wishlistId = 1;
 
-		when(wishlistRepo.findById(wishlistId)).thenReturn(Optional.empty());
-		wishlistService.getWishlistById(wishlistId);
+	    when(wishlistRepo.findById(wishlistId))
+	            .thenReturn(Optional.empty());
+
+	    assertThrows(
+	        WishlistNotFoundException.class,
+	        () -> wishlistService.getWishlistById(wishlistId)
+	    );
 	}
 
 	@Test // DeleteWishlistById
@@ -141,18 +161,30 @@ public class WishlistServiceTest {
 		verify(wishlistRepo, times(1)).deleteById(wishlistId);
 	}
 
-	@Test(expected = WishlistNotFoundException.class)
-	public void testDeleteWishlistNotFound() {
-		int wishlistId = 1;
-		doThrow(new EmptyResultDataAccessException(1)).when(wishlistRepo).deleteById(wishlistId);
-		wishlistService.deleteWishlist(wishlistId);
+	@Test
+	void testDeleteWishlistNotFound() {
+	    int wishlistId = 1;
+
+	    doThrow(new EmptyResultDataAccessException(1))
+	            .when(wishlistRepo).deleteById(wishlistId);
+
+	    assertThrows(
+	        WishlistNotFoundException.class,
+	        () -> wishlistService.deleteWishlist(wishlistId)
+	    );
 	}
 
-	@Test(expected = WishlistNotFoundException.class)
-	public void testDeleteWishlistUnexpectedException() {
-		int wishlistId = 1;
-		doThrow(new WishlistNotFoundException("Database connection error")).when(wishlistRepo).deleteById(wishlistId);
-		wishlistService.deleteWishlist(wishlistId);
+	@Test
+	void testDeleteWishlistUnexpectedException() {
+	    int wishlistId = 1;
+
+	    doThrow(new WishlistNotFoundException("Database connection error"))
+	            .when(wishlistRepo).deleteById(wishlistId);
+
+	    assertThrows(
+	        WishlistNotFoundException.class,
+	        () -> wishlistService.deleteWishlist(wishlistId)
+	    );
 	}
 
 	@Test // getAllWishlist
@@ -180,12 +212,15 @@ public class WishlistServiceTest {
 		assertEquals(wishlist2, result.get(1));
 	}
 
-	@Test(expected = UserNotFoundException.class)
-	public void testGetAllWishlistNotFound() {
+	@Test
+	void testGetAllWishlistNotFound() {
+	    String username = "testUser";
 
-		String username = "testUser";
-		when(userRepo.findByUserName(username)).thenReturn(null);
+	    when(userRepo.findByUserName(username)).thenReturn(null);
 
-		wishlistService.getAllWishlist(username);
+	    assertThrows(
+	        UserNotFoundException.class,
+	        () -> wishlistService.getAllWishlist(username)
+	    );
 	}
 }

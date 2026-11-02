@@ -1,9 +1,11 @@
 package com.onlinegrocery.service;
 
- 
-import static org.junit.Assert.assertNotNull;
+
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -13,14 +15,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
- 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
- 
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.onlinegrocery.dto.CartDto;
 import com.onlinegrocery.entity.AppUser;
 import com.onlinegrocery.entity.Cart;
@@ -33,7 +36,7 @@ import com.onlinegrocery.repo.CartRepo;
 import com.onlinegrocery.repo.ProductRepo;
 import com.onlinegrocery.serviceImpl.CartServiceImpl;
  
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CartServiceTest {
  
     @Mock
@@ -89,28 +92,35 @@ public class CartServiceTest {
         assertEquals(Collections.singletonList(product), result.getProducts());
     }
  
-    @Test(expected = ProductNotFoundException.class)
-    public void testAddItemToCartProductNotFound() {
+    @Test
+    void testAddItemToCartProductNotFound() {
         CartDto cartDto = new CartDto();
         cartDto.setProductId(1);
- 
-        when(productRepo.findById(1)).thenReturn(Optional.empty());
- 
-        cartService.addItemToCart(cartDto);
-    }
- 
-    @Test(expected = UserNotFoundException.class)
-    public void testAddItemToCartUserNotFound() {
-        CartDto cartDto = new CartDto();
-        cartDto.setProductId(1);
-        cartDto.setUserid(2);
- 
-        when(userRepo.findById(2)).thenReturn(Optional.empty());
-        when(productRepo.findById(1)).thenReturn(Optional.of(new Product()));
- 
-        cartService.addItemToCart(cartDto);
-    }
 
+        when(productRepo.findById(1)).thenReturn(Optional.empty());
+
+        assertThrows(
+            ProductNotFoundException.class,
+            () -> cartService.addItemToCart(cartDto)
+        );
+    }
+ 
+    @Test
+    void testAddItemToCartUserNotFound() {
+        CartDto cartDto = new CartDto();
+        cartDto.setProductId(1);
+
+        when(productRepo.findById(1))
+            .thenReturn(Optional.of(new Product()));
+
+        when(userRepo.findById(anyInt()))
+            .thenReturn(Optional.empty());
+
+        assertThrows(
+            UserNotFoundException.class,
+            () -> cartService.addItemToCart(cartDto)
+        );
+    }
 
     @Test
     public void testUpdateCart() {

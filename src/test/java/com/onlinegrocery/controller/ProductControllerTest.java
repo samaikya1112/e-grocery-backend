@@ -1,7 +1,8 @@
  package com.onlinegrocery.controller;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 import static org.mockito.Mockito.verify;
@@ -14,14 +15,14 @@ import java.util.Arrays;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ import com.onlinegrocery.entity.Product;
 import com.onlinegrocery.enums.Category;
 import com.onlinegrocery.service.ProductService;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ProductControllerTest {
 
     private MockMvc mockMvc;

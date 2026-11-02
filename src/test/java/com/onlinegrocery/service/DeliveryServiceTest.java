@@ -1,50 +1,49 @@
+
 package com.onlinegrocery.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.onlinegrocery.dto.DeliveryDto;
 import com.onlinegrocery.entity.Delivery;
 import com.onlinegrocery.repo.DeliveryRepo;
 import com.onlinegrocery.serviceImpl.DeliveryServiceImpl;
 
+@ExtendWith(MockitoExtension.class)
 public class DeliveryServiceTest {
 
-	@Mock
-	private DeliveryRepo deliveryRepo;
+    @Mock
+    private DeliveryRepo deliveryRepo;
 
-	@InjectMocks
-	private DeliveryServiceImpl deliveryService;
+    @InjectMocks
+    private DeliveryServiceImpl deliveryService;
 
-	@Before
-	public void init() {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Test
+    void testAddDeliverySlots() {
+        DeliveryDto deliveryDto = new DeliveryDto();
 
-	@Test
-	public void testAddDeliverySlots() {
-		DeliveryDto deliveryDto = new DeliveryDto();
-		Delivery delivery = new Delivery();
-		delivery.setDeliveryId(deliveryDto.getDeliveryId());
-		delivery.setDeliveryDate(deliveryDto.getDeliveryDate());
-		delivery.setDeliveryTime(deliveryDto.getDeliveryTime());
-		when(deliveryRepo.save(delivery)).thenReturn(delivery);
+        Delivery savedDelivery = new Delivery();
+        savedDelivery.setDeliveryId(deliveryDto.getDeliveryId());
+        savedDelivery.setDeliveryDate(deliveryDto.getDeliveryDate());
+        savedDelivery.setDeliveryTime(deliveryDto.getDeliveryTime());
 
-		DeliveryDto result = deliveryService.addDeliverySlots(deliveryDto);
+        when(deliveryRepo.save(any(Delivery.class)))
+                .thenReturn(savedDelivery);
 
-		assertEquals(deliveryDto.getDeliveryId(), result.getDeliveryId());
-		assertEquals(deliveryDto.getDeliveryDate(), result.getDeliveryDate());
-		assertEquals(deliveryDto.getDeliveryTime(), result.getDeliveryTime());
-		when(deliveryRepo.save(Mockito.any(Delivery.class))).thenReturn(new Delivery());
+        DeliveryDto result = deliveryService.addDeliverySlots(deliveryDto);
 
-	}
+        assertEquals(deliveryDto.getDeliveryId(), result.getDeliveryId());
+        assertEquals(deliveryDto.getDeliveryDate(), result.getDeliveryDate());
+        assertEquals(deliveryDto.getDeliveryTime(), result.getDeliveryTime());
+
+        verify(deliveryRepo).save(any(Delivery.class));
+    }
 }

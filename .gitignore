@@ -31,3 +31,17 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Maven generated files
+target/
+
+# IDE files
+.settings/
+.classpath
+.project
+.factorypath
+
+# Local database configuration and secrets
+/src/main/resources/application.properties
+.env

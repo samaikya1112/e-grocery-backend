@@ -1,26 +1,29 @@
 
 package com.onlinegrocery.service;
 
-import static org.junit.Assert.assertArrayEquals;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.onlinegrocery.entity.Product;
 import com.onlinegrocery.enums.Category;
@@ -29,7 +32,7 @@ import com.onlinegrocery.exceptions.ProductsNotAvailableException;
 import com.onlinegrocery.repo.ProductRepo;
 import com.onlinegrocery.serviceImpl.ProductServiceImpl;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
 
 	@Mock
@@ -38,10 +41,6 @@ public class ProductServiceTest {
 	@InjectMocks
 	private ProductServiceImpl productService;
 
-	@Before
-	public void init() {
-		MockitoAnnotations.initMocks(this);
-	}
 
 	@Test
 	public void testAddProduct() {
